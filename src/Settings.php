@@ -7,6 +7,7 @@ namespace Centrex\LaravelSettings;
 use Centrex\LaravelSettings\Models\Setting;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
+use Schema;
 
 class Settings
 {
@@ -21,7 +22,7 @@ class Settings
 
     public function chargeConfig()
     {
-        if (! \Schema::hasTable('settings')) {
+        if ( ! Schema::hasTable('settings')) {
             return;
         }
 
@@ -30,7 +31,7 @@ class Settings
         });
 
         foreach (Arr::dot(config('settings')) as $key => $setting) {
-            if (! $settings->contains('key', $key)) {
+            if ( ! $settings->contains('key', $key)) {
                 app('config')->set([$key => $setting]);
             }
         }
