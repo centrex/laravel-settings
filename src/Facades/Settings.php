@@ -7,12 +7,12 @@ namespace Centrex\LaravelSettings\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \Centrex\LaravelSettings\LaravelSettings
+ * @see \Centrex\LaravelSettings\Setting
  */
-class LaravelSettings extends Facade
+class Settings extends Facade
 {
     protected static function getFacadeAccessor()
     {
-        return \Centrex\LaravelSettings\LaravelSettings::class;
+        return \Centrex\LaravelSettings\Settings::class;
     }
 }

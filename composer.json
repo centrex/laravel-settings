@@ -77,7 +77,7 @@
                 "Centrex\\LaravelSettings\\LaravelSettingsServiceProvider"
             ],
             "aliases": {
-                "LaravelSettings": "Centrex\\LaravelSettings\\Facades\\LaravelSettings"
+                "Settings": "Centrex\\LaravelSettings\\Facades\\Settings"
             }
         }
     },
