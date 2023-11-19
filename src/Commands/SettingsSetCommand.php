@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Centrex\LaravelSettings\Commands;
 
-use Illuminate\Console\Command;
 use Centrex\LaravelSettings\Facades\Setting;
+use Illuminate\Console\Command;
 
 class SettingsSetCommand extends Command
 {

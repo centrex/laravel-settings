@@ -1,12 +1,13 @@
 <?php
 
-if (!function_exists('get_setting')) {
-    
+declare(strict_types=1);
+
+if ( ! function_exists('get_setting')) {
     /**
      * Get setting
      *
-     * @param string $key
-     * @param mixed $value
+     * @param  string  $key
+     * @param  mixed  $value
      * @return mixed
      */
     function get_option($key, $value = null)
@@ -15,13 +16,12 @@ if (!function_exists('get_setting')) {
     }
 }
 
-if (!function_exists('set_setting')) {
-    
+if ( ! function_exists('set_setting')) {
     /**
      * Set setting
      *
-     * @param string $key
-     * @param mixed $value
+     * @param  string  $key
+     * @param  mixed  $value
      * @return mixed
      */
     function set_option($key, $value = null)
@@ -30,15 +30,13 @@ if (!function_exists('set_setting')) {
     }
 }
 
-if (!function_exists('option_exists')) {
-    
+if ( ! function_exists('option_exists')) {
     /**
      * Check if setting exists
      *
-     * @param string $key
-     * @return bool
+     * @param  string  $key
      */
-    function option_exists($key) : bool
+    function option_exists($key): bool
     {
         return app('settings')->exists($key);
     }
