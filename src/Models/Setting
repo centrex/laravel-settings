@@ -11,6 +11,13 @@ class Setting extends Model
 {
     use HasFactory;
 
+    /**
+     * The table that this model should read from
+     *
+     * @var string
+     */
+    protected $table = 'settings';
+
     protected $fillable = [
         'key',
         'value',
@@ -32,11 +39,33 @@ class Setting extends Model
         });
     }
 
+    /**
+     * Check if a key exists in the database
+     *
+     * @param string $key
+     * @return bool
+     */
+    public function exists($key) : bool
+    {
+        return self::where('key', $key)->exists();
+    }
+
     protected function value(): Attribute
     {
         return Attribute::make(
             get: fn ($value) => unserialize($value),
             set: fn ($value) => serialize($value),
         );
+    }
+
+    /**
+     * Delete a key from the database
+     *
+     * @param string $key
+     * @return boolean
+     */
+    public function remove($key) : bool
+    {
+        return (bool) self::where('key', $key)->delete();
     }
 }

@@ -40,7 +40,9 @@ class LaravelSettingsServiceProvider extends ServiceProvider
             ], 'lang');*/
 
             // Registering package commands.
-            // $this->commands([]);
+            $this->commands([
+                \Centrex\LaravelSettings\Commands\SettingsSetCommand::class,
+            ]);
         }
     }
 
