@@ -26,8 +26,8 @@ class Settings
             return;
         }
 
-        $settings = Cache::rememberForever('laravel-settings-db', function () {
-            return Setting::get()->toBase();
+        $settings = Cache::rememberForever('settings-db', function () {
+            return Setting::autoload()->get()->toBase();
         });
 
         foreach (Arr::dot(config('settings')) as $key => $setting) {
@@ -41,8 +41,8 @@ class Settings
 
     public function refreshCache()
     {
-        Cache::forget('laravel-settings-db');
-        Cache::rememberForever('laravel-settings-db', fn () => Setting::get()->toBase());
+        Cache::forget('settings-db');
+        Cache::rememberForever('settings-db', fn () => Setting::get()->toBase());
 
         return $this->chargeConfig();
     }

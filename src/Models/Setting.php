@@ -68,4 +68,9 @@ class Setting extends Model
     {
         return (bool) self::where('key', $key)->delete();
     }
+
+    public function scopeAutoload($query)
+    {
+        return $query->where('autuload', 1);
+    }
 }

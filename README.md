@@ -18,14 +18,13 @@ composer require centrex/laravel-settings
 You can publish and run the migrations with:
 
 ```bash
-php artisan vendor:publish --tag="laravel-settings-migrations"
 php artisan migrate
 ```
 
 You can publish the config file with:
 
 ```bash
-php artisan vendor:publish --tag="laravel-settings-config"
+php artisan vendor:publish --tag="settings-config"
 ```
 
 This is the contents of the published config file:
@@ -38,14 +37,23 @@ return [
 Optionally, you can publish the views using
 
 ```bash
-php artisan vendor:publish --tag="laravel-settings-views"
+php artisan vendor:publish --tag="settings-views"
 ```
 
 ## Usage
 
+To get and retrieve stored settings, you can do it easily with the Settings Facade or by using the settings() helper function:
+
 ```php
-$laravelSettings = new Centrex\LaravelSettings();
-echo $laravelSettings->echoPhrase('Hello, Centrex!');
+// Setting
+Settings::set('foo', 'bar');
+settings()->set('foo', 'bar');
+settings(['foo' => 'bar']);
+
+// Retrieving
+Settings::get('foo'); // 'bar'
+settings()->get('foo');
+settings('foo');
 ```
 
 ## Testing
