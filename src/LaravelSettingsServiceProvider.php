@@ -22,22 +22,22 @@ class LaravelSettingsServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->publishes([
                 __DIR__.'/../config/config.php' => config_path('settings.php'),
-            ], 'config');
+            ], 'settings-config');
 
             // Publishing the views.
             /*$this->publishes([
                 __DIR__.'/../resources/views' => resource_path('views/vendor/settings'),
-            ], 'views');*/
+            ], 'settings-views');*/
 
             // Publishing assets.
             /*$this->publishes([
                 __DIR__.'/../resources/assets' => public_path('vendor/settings'),
-            ], 'assets');*/
+            ], 'settings-assets');*/
 
             // Publishing the translation files.
             /*$this->publishes([
                 __DIR__.'/../resources/lang' => resource_path('lang/vendor/settings'),
-            ], 'lang');*/
+            ], 'settings-lang');*/
 
             // Registering package commands.
             $this->commands([
