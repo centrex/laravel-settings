@@ -27,19 +27,6 @@ You can publish the config file with:
 php artisan vendor:publish --tag="settings-config"
 ```
 
-This is the contents of the published config file:
-
-```php
-return [
-];
-```
-
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag="settings-views"
-```
-
 ## Usage
 
 To get and retrieve stored settings, you can do it easily with the Settings Facade or by using the settings() helper function:
