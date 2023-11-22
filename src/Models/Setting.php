@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Centrex\LaravelSettings\Models;
 
 use Centrex\LaravelSettings\Facades\Settings;
@@ -42,10 +44,9 @@ class Setting extends Model
     /**
      * Check if a key exists in the database
      *
-     * @param string $key
-     * @return bool
+     * @param  string  $key
      */
-    public function exists($key) : bool
+    public function exists($key): bool
     {
         return self::where('key', $key)->exists();
     }
@@ -61,10 +62,9 @@ class Setting extends Model
     /**
      * Delete a key from the database
      *
-     * @param string $key
-     * @return boolean
+     * @param  string  $key
      */
-    public function remove($key) : bool
+    public function remove($key): bool
     {
         return (bool) self::where('key', $key)->delete();
     }
