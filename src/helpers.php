@@ -16,10 +16,6 @@ if ( ! function_exists('settings')) {
             return;
         }
 
-        if (is_array($key)) {
-            return app('settings')->set($key, value($default));
-        }
-
         return app('settings')->get($key, value($default));
     }
 }
