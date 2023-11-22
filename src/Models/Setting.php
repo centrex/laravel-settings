@@ -14,6 +14,14 @@ class Setting extends Model
     use HasFactory;
 
     /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+
+    public $timestamps = false;
+
+    /**
      * The table that this model should read from
      *
      * @var string
