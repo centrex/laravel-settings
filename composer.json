@@ -35,13 +35,13 @@
         "spatie/laravel-ray": "^1.26"
     },
     "autoload": {
-        "files": [
-            "src/helpers.php"
-        ],
         "psr-4": {
             "Centrex\\LaravelSettings\\": "src/",
             "Centrex\\LaravelSettings\\Database\\Factories\\": "database/factories/"
-        }
+        },
+        "files": [
+            "src/helpers.php"
+        ],
     },
     "autoload-dev": {
         "psr-4": {
