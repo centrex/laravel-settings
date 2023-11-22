@@ -46,7 +46,7 @@ class Setting extends Model
      *
      * @param  string  $key
      */
-    public function exists($key): bool
+    public static function exists($key): bool
     {
         return (bool) self::where('key', $key)->exists();
     }
