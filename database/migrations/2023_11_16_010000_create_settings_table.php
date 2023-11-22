@@ -15,7 +15,6 @@ return new class extends Migration
             $table->string('key')->unique()->index()->comment('Setting Key: Searchable and Indexed Unique');
             $table->text('value')->comment('Setting Value');
             $table->boolean('autoload')->default(true);
-            $table->timestamps();
         });
     }
 

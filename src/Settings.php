@@ -23,7 +23,7 @@ class Settings
     // Get setting value by key or default value if not exists
     public function get($key, $default = null)
     {
-        if (Setting::exists($key)) {
+        if (app('settings')->exists($key)) {
             return Setting::where('key', $key)->first()->value;
         }
 

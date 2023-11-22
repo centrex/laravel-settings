@@ -48,7 +48,7 @@ class Setting extends Model
      */
     public function exists($key): bool
     {
-        return self::where('key', $key)->exists();
+        return (bool) self::where('key', $key)->exists();
     }
 
     protected function value(): Attribute
