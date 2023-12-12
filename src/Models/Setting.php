@@ -81,4 +81,9 @@ class Setting extends Model
     {
         return $query->where('autuload', 1);
     }
+
+    public function scopeGroup($query, $groupName)
+    {
+        return $query->whereGroup($groupName);
+    }
 }

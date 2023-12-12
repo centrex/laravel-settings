@@ -7,7 +7,7 @@ namespace Centrex\LaravelSettings;
 use Centrex\LaravelSettings\Models\Setting;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
-use Schema;
+use Illuminate\Support\Facades\Schema;
 
 class Settings
 {
