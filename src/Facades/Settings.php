@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Facade;
 /**
  * @see \Centrex\LaravelSettings\Setting
  */
-class Settings extends Facade
+final class Settings extends Facade
 {
     protected static function getFacadeAccessor()
     {

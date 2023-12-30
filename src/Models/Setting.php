@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Setting extends Model
+final class Setting extends Model
 {
     use HasFactory;
 
@@ -18,7 +18,6 @@ class Setting extends Model
      *
      * @var bool
      */
-
     public $timestamps = false;
 
     /**
@@ -40,11 +39,11 @@ class Setting extends Model
      */
     protected static function booted()
     {
-        static::saved(function ($setting) {
+        self::saved(function ($setting): void {
             Settings::refreshCache();
         });
 
-        static::deleted(function ($setting) {
+        self::deleted(function ($setting): void {
             Settings::refreshCache();
         });
     }
@@ -59,11 +58,11 @@ class Setting extends Model
         return (bool) self::where('key', $key)->exists();
     }
 
-    protected function value(): Attribute
+    private function value(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => unserialize($value),
-            set: fn ($value) => serialize($value),
+            get: fn ($value): mixed => unserialize($value),
+            set: fn ($value): string => serialize($value),
         );
     }
 

@@ -6,10 +6,10 @@ namespace Centrex\LaravelSettings;
 
 use Illuminate\Support\ServiceProvider;
 
-class LaravelSettingsServiceProvider extends ServiceProvider
+final class LaravelSettingsServiceProvider extends ServiceProvider
 {
     /** Bootstrap the application services. */
-    public function boot()
+    public function boot(): void
     {
         /*
          * Optional methods to load your package assets
@@ -47,14 +47,12 @@ class LaravelSettingsServiceProvider extends ServiceProvider
     }
 
     /** Register the application services. */
-    public function register()
+    public function register(): void
     {
         // Automatically apply the package configuration
         $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'settings');
 
         // Register the main class to use with the facade
-        $this->app->singleton('settings', function () {
-            return new Settings;
-        });
+        $this->app->singleton('settings', fn (): \Centrex\LaravelSettings\Settings => new Settings);
     }
 }

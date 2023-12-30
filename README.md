@@ -86,6 +86,7 @@ Please review [our security policy](../../security/policy) on how to report secu
 
 - [centrex](https://github.com/centrex)
 - [All Contributors](../../contributors)
+- [rawilk/laravel-settings](https://github.com/rawilk/laravel-settings)
 
 ## License
 

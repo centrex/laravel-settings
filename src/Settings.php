@@ -9,9 +9,9 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
 
-class Settings
+final class Settings
 {
-    public function set($key, $value)
+    public function set($key, $value): void
     {
         Setting::updateOrCreate([
             'key' => $key,
@@ -30,15 +30,13 @@ class Settings
         return $default;
     }
 
-    public function chargeConfig()
+    public function chargeConfig(): void
     {
         if ( ! Schema::hasTable('settings')) {
             return;
         }
 
-        $settings = Cache::rememberForever('settings-db', function () {
-            return Setting::autoload()->get()->toBase();
-        });
+        $settings = Cache::rememberForever('settings-db', fn () => Setting::autoload()->get()->toBase());
 
         foreach (Arr::dot(config('settings')) as $key => $setting) {
             if ( ! $settings->contains('key', $key)) {

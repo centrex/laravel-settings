@@ -7,7 +7,7 @@ namespace Centrex\LaravelSettings\Commands;
 use Centrex\LaravelSettings\Facades\Setting;
 use Illuminate\Console\Command;
 
-class SettingsSetCommand extends Command
+final class SettingsSetCommand extends Command
 {
     /**
      * The name and signature of the console command.
@@ -25,12 +25,8 @@ class SettingsSetCommand extends Command
      */
     protected $description = 'Create an setting.';
 
-    /**
-     * Execute the console command.
-     *
-     * @return mixed
-     */
-    public function handle()
+    /** Execute the console command. */
+    public function handle(): void
     {
         Setting::set($this->argument('key'), $this->argument('value'));
 
