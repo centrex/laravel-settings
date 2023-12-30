@@ -56,7 +56,7 @@ final class Setting extends Model
         return (bool) self::where('key', $key)->exists();
     }
 
-    private function value(): Attribute
+    protected function value(): Attribute
     {
         return Attribute::make(
             get: fn ($value): mixed => unserialize($value),
