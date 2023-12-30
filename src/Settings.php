@@ -1,13 +1,12 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
-namespace Centrex\LaravelSettings;
+namespace Centrex\Settings;
 
-use Centrex\LaravelSettings\Models\Setting;
+use Centrex\Settings\Models\Setting;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\{Cache, Schema};
 
 final class Settings
 {
@@ -32,14 +31,14 @@ final class Settings
 
     public function chargeConfig(): void
     {
-        if ( ! Schema::hasTable('settings')) {
+        if (!Schema::hasTable('settings')) {
             return;
         }
 
         $settings = Cache::rememberForever('settings-db', fn () => Setting::autoload()->get()->toBase());
 
         foreach (Arr::dot(config('settings')) as $key => $setting) {
-            if ( ! $settings->contains('key', $key)) {
+            if (!$settings->contains('key', $key)) {
                 app('config')->set([$key => $setting]);
             }
         }

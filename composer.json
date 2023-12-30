@@ -37,8 +37,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Centrex\\LaravelSettings\\": "src/",
-            "Centrex\\LaravelSettings\\Database\\Factories\\": "database/factories/"
+            "Centrex\\Settings\\": "src/",
+            "Centrex\\Settings\\Database\\Factories\\": "database/factories/"
         },
         "files": [
             "src/helpers.php"
@@ -46,7 +46,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Centrex\\LaravelSettings\\Tests\\": "tests/",
+            "Centrex\\Settings\\Tests\\": "tests/",
             "Workbench\\App\\": "workbench/app/"
         }
     },
@@ -88,10 +88,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Centrex\\LaravelSettings\\LaravelSettingsServiceProvider"
+                "Centrex\\Settings\\LaravelSettingsServiceProvider"
             ],
             "aliases": {
-                "Settings": "Centrex\\LaravelSettings\\Facades\\Settings"
+                "Settings": "Centrex\\Settings\\Facades\\Settings"
             }
         }
     },

@@ -1,8 +1,8 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
-namespace Centrex\LaravelSettings\Database\Factories;
+namespace Centrex\Settings\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 

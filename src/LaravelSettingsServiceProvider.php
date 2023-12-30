@@ -1,8 +1,8 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
-namespace Centrex\LaravelSettings;
+namespace Centrex\Settings;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -16,12 +16,12 @@ final class LaravelSettingsServiceProvider extends ServiceProvider
          */
         // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'settings');
         // $this->loadViewsFrom(__DIR__.'/../resources/views', 'settings');
-        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         // $this->loadRoutesFrom(__DIR__.'/routes.php');
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__.'/../config/config.php' => config_path('settings.php'),
+                __DIR__ . '/../config/config.php' => config_path('settings.php'),
             ], 'settings-config');
 
             // Publishing the views.
@@ -41,7 +41,7 @@ final class LaravelSettingsServiceProvider extends ServiceProvider
 
             // Registering package commands.
             $this->commands([
-                \Centrex\LaravelSettings\Commands\SettingsSetCommand::class,
+                \Centrex\Settings\Commands\SettingsSetCommand::class,
             ]);
         }
     }
@@ -50,9 +50,9 @@ final class LaravelSettingsServiceProvider extends ServiceProvider
     public function register(): void
     {
         // Automatically apply the package configuration
-        $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'settings');
+        $this->mergeConfigFrom(__DIR__ . '/../config/config.php', 'settings');
 
         // Register the main class to use with the facade
-        $this->app->singleton('settings', fn (): \Centrex\LaravelSettings\Settings => new Settings);
+        $this->app->singleton('settings', fn (): \Centrex\Settings\Settings => new Settings());
     }
 }

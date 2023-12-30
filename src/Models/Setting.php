@@ -1,10 +1,10 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
-namespace Centrex\LaravelSettings\Models;
+namespace Centrex\Settings\Models;
 
-use Centrex\LaravelSettings\Facades\Settings;
+use Centrex\Settings\Facades\Settings;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -34,10 +34,8 @@ final class Setting extends Model
 
     /**
      * The "booted" method of the model.
-     *
-     * @return void
      */
-    protected static function booted()
+    protected static function booted(): void
     {
         self::saved(function ($setting): void {
             Settings::refreshCache();

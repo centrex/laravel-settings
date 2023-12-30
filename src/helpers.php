@@ -1,8 +1,8 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
-if ( ! function_exists('settings')) {
+if (!function_exists('settings')) {
     /**
      * Function access to application settings in database
      *
@@ -20,7 +20,7 @@ if ( ! function_exists('settings')) {
     }
 }
 
-if ( ! function_exists('get_setting')) {
+if (!function_exists('get_setting')) {
     /**
      * Get setting
      *
@@ -33,7 +33,7 @@ if ( ! function_exists('get_setting')) {
     }
 }
 
-if ( ! function_exists('set_setting')) {
+if (!function_exists('set_setting')) {
     /**
      * Set setting
      *
@@ -46,7 +46,7 @@ if ( ! function_exists('set_setting')) {
     }
 }
 
-if ( ! function_exists('option_exists')) {
+if (!function_exists('option_exists')) {
     /**
      * Check if setting exists
      *

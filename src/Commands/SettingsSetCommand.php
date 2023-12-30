@@ -1,10 +1,10 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
-namespace Centrex\LaravelSettings\Commands;
+namespace Centrex\Settings\Commands;
 
-use Centrex\LaravelSettings\Facades\Setting;
+use Centrex\Settings\Facades\Settings;
 use Illuminate\Console\Command;
 
 final class SettingsSetCommand extends Command
@@ -28,7 +28,7 @@ final class SettingsSetCommand extends Command
     /** Execute the console command. */
     public function handle(): void
     {
-        Setting::set($this->argument('key'), $this->argument('value'));
+        Settings::set($this->argument('key'), $this->argument('value'));
 
         $this->info('Setting added.');
     }

@@ -1,18 +1,18 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
-namespace Centrex\LaravelSettings\Facades;
+namespace Centrex\Settings\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \Centrex\LaravelSettings\Setting
+ * @see \Centrex\Settings\Setting
  */
 final class Settings extends Facade
 {
     protected static function getFacadeAccessor()
     {
-        return \Centrex\LaravelSettings\Settings::class;
+        return \Centrex\Settings\Settings::class;
     }
 }

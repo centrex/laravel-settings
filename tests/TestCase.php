@@ -1,21 +1,21 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
-namespace Centrex\LaravelSettings\Tests;
+namespace Centrex\Settings\Tests;
 
-use Centrex\LaravelSettings\LaravelSettingsServiceProvider;
+use Centrex\Settings\LaravelSettingsServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
 
-class TestCase extends Orchestra
+final class TestCase extends Orchestra
 {
     protected function setUp(): void
     {
         parent::setUp();
 
         Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'Centrex\\LaravelSettings\\Database\\Factories\\'.class_basename($modelName).'Factory'
+            fn (string $modelName): string => 'Centrex\\Settings\\Database\\Factories\\' . class_basename($modelName) . 'Factory',
         );
     }
 
@@ -26,7 +26,7 @@ class TestCase extends Orchestra
         ];
     }
 
-    public function getEnvironmentSetUp($app)
+    public function getEnvironmentSetUp($app): void
     {
         config()->set('database.default', 'testing');
 
