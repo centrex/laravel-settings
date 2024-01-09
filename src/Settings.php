@@ -35,7 +35,7 @@ final class Settings
             return;
         }
 
-        $settings = Cache::rememberForever('settings-db', fn () => Setting::autoload()->get()->toBase());
+        $settings = Cache::rememberForever('settings.cache', fn () => Setting::autoload()->get()->toBase());
 
         foreach (Arr::dot(config('settings')) as $key => $setting) {
             if (!$settings->contains('key', $key)) {
