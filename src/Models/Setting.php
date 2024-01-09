@@ -76,7 +76,7 @@ final class Setting extends Model
 
     public function scopeAutoload($query)
     {
-        return $query->where('autuload', 1);
+        return $query->where('autoload', 1);
     }
 
     public function scopeGroup($query, $groupName)
