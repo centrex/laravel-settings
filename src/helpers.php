@@ -6,8 +6,8 @@ if (!function_exists('settings')) {
     /**
      * Function access to application settings in database
      *
-     * @param  string  $key - key of setting
-     * @param  string  $default - default value
+     * @param  string  $key  - key of setting
+     * @param  string  $default  - default value
      * @return object|string setting
      */
     function settings($key = null, $default = null)

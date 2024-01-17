@@ -41,7 +41,7 @@ final class LaravelSettingsServiceProvider extends ServiceProvider
 
             // Registering package commands.
             $this->commands([
-                \Centrex\Settings\Commands\SettingsSetCommand::class,
+                Commands\SettingsSetCommand::class,
             ]);
         }
     }
