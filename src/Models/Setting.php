@@ -37,11 +37,11 @@ final class Setting extends Model
      */
     protected static function booted(): void
     {
-        self::saved(function ($setting): void {
+        self::saved(function (): void {
             Settings::refreshCache();
         });
 
-        self::deleted(function ($setting): void {
+        self::deleted(function (): void {
             Settings::refreshCache();
         });
     }

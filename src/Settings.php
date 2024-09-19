@@ -48,8 +48,8 @@ final class Settings
 
     public function refreshCache()
     {
-        Cache::forget('settings-db');
-        Cache::rememberForever('settings-db', fn () => Setting::get()->toBase());
+        Cache::forget('settings.cache');
+        Cache::rememberForever('settings.cache', fn () => Setting::get()->toBase());
 
         return $this->chargeConfig();
     }
