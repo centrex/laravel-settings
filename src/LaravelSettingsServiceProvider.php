@@ -57,6 +57,6 @@ final class LaravelSettingsServiceProvider extends ServiceProvider
         $this->app->singleton('settings', fn (): \Centrex\Settings\Settings => new Settings());
 
         // Register the observer
-        Setting::observe(SettingsObserver::class);
+        Settings::observe(SettingsObserver::class);
     }
 }
