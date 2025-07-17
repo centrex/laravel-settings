@@ -5,7 +5,6 @@ declare(strict_types = 1);
 namespace Centrex\Settings;
 
 use Illuminate\Support\ServiceProvider;
-use Centrex\Settings\Observers\SettingsObserver;
 
 final class LaravelSettingsServiceProvider extends ServiceProvider
 {
@@ -55,8 +54,5 @@ final class LaravelSettingsServiceProvider extends ServiceProvider
 
         // Register the main class to use with the facade
         $this->app->singleton('settings', fn (): \Centrex\Settings\Settings => new Settings());
-
-        // Register the observer
-        Settings::observe(SettingsObserver::class);
     }
 }

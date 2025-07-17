@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Centrex\Settings\Models;
 
 use Centrex\Settings\Facades\Settings;
+use Centrex\Settings\Observers\SettingsObserver;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -49,13 +50,7 @@ final class Setting extends Model
      */
     protected static function booted(): void
     {
-        static::saved(function (self $model) {
-            $model->refreshCache();
-        });
-
-        static::deleted(function (self $model) {
-            $model->refreshCache();
-        });
+        static::observe(SettingsObserver::class);
     }
 
     /**
