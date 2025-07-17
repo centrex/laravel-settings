@@ -42,15 +42,66 @@ php artisan migrate
 To get and retrieve stored settings, you can do it easily with the Settings Facade or by using the settings() helper function:
 
 ```php
-// Setting
+// Set a setting
 Settings::set('foo', 'bar');
 settings()->set('foo', 'bar');
 settings(['foo' => 'bar']);
 
-// Retrieving
+// Get a setting
 Settings::get('foo'); // 'bar'
 settings()->get('foo');
 settings('foo');
+
+// Check existence
+if (settings()->has('app.debug')) {
+    // ...
+}
+
+// Remove a setting
+settings()->forget('old.setting');
+
+// Refresh cache
+settings()->refreshCache();
+```
+
+```php
+// Check if setting exists (cached)
+Setting::exists('app.timezone');
+
+// Get autoloaded settings
+Setting::autoload()->get();
+
+// Get settings in a group
+Setting::group('email')->get();
+
+// Find settings with matching keys
+Setting::keyLike('app.')->get();
+
+// Remove a setting
+Setting::remove('old.setting');
+```
+### Helpers
+
+```php
+// Get a setting with default value
+$timezone = settings('app.timezone', 'UTC');
+
+// Get using dedicated function
+$debug = get_setting('app.debug', false);
+
+// Set a setting
+set_setting('app.maintenance_mode', true);
+
+// Check existence
+if (setting_exists('app.feature_flag')) {
+    // ...
+}
+
+// Remove a setting
+remove_setting('old.setting');
+
+// Access Settings instance directly
+settings()->refreshCache();
 ```
 
 ## Testing

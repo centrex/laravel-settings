@@ -1,59 +1,77 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 if (!function_exists('settings')) {
     /**
-     * Function access to application settings in database
+     * Get or set application settings from database
      *
-     * @param  string  $key  - key of setting
-     * @param  string  $default  - default value
-     * @return object|string setting
+     * @param string|null $key Setting key (dot notation supported)
+     * @param mixed $default Default value if setting doesn't exist
+     * @return mixed|Settings Returns setting value or Settings instance when no key provided
      */
-    function settings($key = null, $default = null)
+    function settings(?string $key = null, mixed $default = null): mixed
     {
+        $settings = app('settings');
+
         if (is_null($key)) {
-            return;
+            return $settings;
         }
 
-        return app('settings')->get($key, value($default));
+        return $settings->get($key, value($default));
     }
 }
 
 if (!function_exists('get_setting')) {
     /**
-     * Get setting
+     * Get a setting value
      *
-     * @param  string  $key
+     * @param string $key Setting key
+     * @param mixed $default Default value if setting doesn't exist
      * @return mixed
      */
-    function get_option($key, mixed $value = null)
+    function get_setting(string $key, mixed $default = null): mixed
     {
-        return app('settings')->get($key, $value);
+        return app('settings')->get($key, $default);
     }
 }
 
 if (!function_exists('set_setting')) {
     /**
-     * Set setting
+     * Set a setting value
      *
-     * @param  string  $key
-     * @return mixed
+     * @param string $key Setting key
+     * @param mixed $value Value to set
+     * @return void
      */
-    function set_option($key, mixed $value = null)
+    function set_setting(string $key, mixed $value = null): void
     {
-        return app('settings')->set($key, $value);
+        app('settings')->set($key, $value);
     }
 }
 
-if (!function_exists('option_exists')) {
+if (!function_exists('setting_exists')) {
     /**
-     * Check if setting exists
+     * Check if a setting exists
      *
-     * @param  string  $key
+     * @param string $key Setting key to check
+     * @return bool
      */
-    function option_exists($key): bool
+    function setting_exists(string $key): bool
     {
-        return app('settings')->exists($key);
+        return app('settings')->has($key);
+    }
+}
+
+if (!function_exists('remove_setting')) {
+    /**
+     * Remove a setting
+     *
+     * @param string $key Setting key to remove
+     * @return void
+     */
+    function remove_setting(string $key): void
+    {
+        app('settings')->forget($key);
     }
 }

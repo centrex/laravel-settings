@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Centrex\Settings;
 
@@ -8,49 +8,112 @@ use Centrex\Settings\Models\Setting;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\{Cache, Schema};
 
+/**
+ * Application settings management service.
+ * 
+ * Provides a fluent interface for managing application settings with:
+ * - Database persistence
+ * - Config integration
+ * - Caching layer
+ * - Dot-notation support
+ */
 final class Settings
 {
-    public function set($key, $value): void
+    private const CACHE_KEY = 'settings.cache';
+
+    /**
+     * Set a setting value.
+     * 
+     * @param string $key Setting key (dot notation supported)
+     * @param mixed $value Setting value
+     */
+    public function set(string $key, $value): void
     {
-        Setting::updateOrCreate([
-            'key' => $key,
-        ], [
-            'value' => $value,
-        ]);
+        Setting::updateOrCreate(
+            ['key' => $key],
+            ['value' => $value]
+        );
+
+        $this->refreshCache();
     }
 
-    // Get setting value by key or default value if not exists
-    public function get($key, $default = null)
+    /**
+     * Get a setting value.
+     * 
+     * @param string $key Setting key
+     * @param mixed $default Default value if not found
+     * @return mixed
+     */
+    public function get(string $key, $default = null)
     {
-        if (Setting::exists($key)) {
-            return Setting::where('key', $key)->first()->value;
-        }
-
-        return $default;
+        return Cache::rememberForever(self::CACHE_KEY.':'.$key, function() use ($key, $default) {
+            return optional(Setting::where('key', $key)->first())->value ?? $default;
+        });
     }
 
+    /**
+     * Load settings into application config.
+     */
     public function chargeConfig(): void
     {
         if (!Schema::hasTable('settings')) {
             return;
         }
 
-        $settings = Cache::rememberForever('settings.cache', fn () => Setting::autoload()->get()->toBase());
+        $settings = $this->getCachedSettings();
 
-        foreach (Arr::dot(config('settings')) as $key => $setting) {
-            if (!$settings->contains('key', $key)) {
-                app('config')->set([$key => $setting]);
+        // Merge default config values
+        foreach (Arr::dot(config('settings', [])) as $key => $value) {
+            if (!$settings->has($key)) {
+                config([$key => $value]);
             }
         }
 
-        $settings->each(fn ($setting) => app('config')->set([$setting->key => $setting->value]));
+        // Apply database settings
+        $settings->each(function ($setting) {
+            config([$setting->key => $setting->value]);
+        });
     }
 
-    public function refreshCache()
+    /**
+     * Refresh the settings cache.
+     */
+    public function refreshCache(): self
     {
-        Cache::forget('settings.cache');
-        Cache::rememberForever('settings.cache', fn () => Setting::get()->toBase());
+        Cache::forget(self::CACHE_KEY);
+        $this->getCachedSettings(true);
 
-        return $this->chargeConfig();
+        $this->chargeConfig();
+        return $this;
+    }
+
+    /**
+     * Get cached settings collection.
+     */
+    private function getCachedSettings(bool $refresh = false): \Illuminate\Support\Collection
+    {
+        return Cache::remember(
+            self::CACHE_KEY,
+            $refresh ? 0 : null,
+            fn () => Setting::get()->keyBy('key')
+        );
+    }
+
+    /**
+     * Check if setting exists.
+     */
+    public function has(string $key): bool
+    {
+        return $this->getCachedSettings()->has($key);
+    }
+
+    /**
+     * Remove a setting.
+     */
+    public function forget(string $key): void
+    {
+        Setting::where('key', $key)->delete();
+        Cache::forget(self::CACHE_KEY.':'.$key);
+        $this->refreshCache();
     }
 }
