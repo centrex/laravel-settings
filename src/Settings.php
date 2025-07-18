@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Centrex\Settings;
 
@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\{Cache, Schema};
 
 /**
  * Application settings management service.
- * 
+ *
  * Provides a fluent interface for managing application settings with:
  * - Database persistence
  * - Config integration
@@ -23,15 +23,15 @@ final class Settings
 
     /**
      * Set a setting value.
-     * 
-     * @param string $key Setting key (dot notation supported)
-     * @param mixed $value Setting value
+     *
+     * @param  string  $key  Setting key (dot notation supported)
+     * @param  mixed  $value  Setting value
      */
-    public function set(string $key, $value): void
+    public function set(string $key, mixed $value): void
     {
         Setting::updateOrCreate(
             ['key' => $key],
-            ['value' => $value]
+            ['value' => $value],
         );
 
         $this->refreshCache();
@@ -39,16 +39,14 @@ final class Settings
 
     /**
      * Get a setting value.
-     * 
-     * @param string $key Setting key
-     * @param mixed $default Default value if not found
+     *
+     * @param  string  $key  Setting key
+     * @param  mixed  $default  Default value if not found
      * @return mixed
      */
-    public function get(string $key, $default = null)
+    public function get(string $key, mixed $default = null)
     {
-        return Cache::rememberForever(self::CACHE_KEY.':'.$key, function() use ($key, $default) {
-            return optional(Setting::where('key', $key)->first())->value ?? $default;
-        });
+        return Cache::rememberForever(self::CACHE_KEY . ':' . $key, fn () => optional(Setting::where('key', $key)->first())->value ?? $default);
     }
 
     /**
@@ -70,7 +68,7 @@ final class Settings
         }
 
         // Apply database settings
-        $settings->each(function ($setting) {
+        $settings->each(function ($setting): void {
             config([$setting->key => $setting->value]);
         });
     }
@@ -84,6 +82,7 @@ final class Settings
         $this->getCachedSettings(true);
 
         $this->chargeConfig();
+
         return $this;
     }
 
@@ -95,7 +94,7 @@ final class Settings
         return Cache::remember(
             self::CACHE_KEY,
             $refresh ? 0 : null,
-            fn () => Setting::get()->keyBy('key')
+            fn () => Setting::get()->keyBy('key'),
         );
     }
 
@@ -113,7 +112,7 @@ final class Settings
     public function forget(string $key): void
     {
         Setting::where('key', $key)->delete();
-        Cache::forget(self::CACHE_KEY.':'.$key);
+        Cache::forget(self::CACHE_KEY . ':' . $key);
         $this->refreshCache();
     }
 }

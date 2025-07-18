@@ -53,6 +53,6 @@ final class LaravelSettingsServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__ . '/../config/config.php', 'settings');
 
         // Register the main class to use with the facade
-        $this->app->singleton('settings', fn (): \Centrex\Settings\Settings => new Settings());
+        $this->app->singleton('settings', fn (): Settings => new Settings());
     }
 }

@@ -1,15 +1,14 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace Centrex\Settings\Models;
 
 use Centrex\Settings\Facades\Settings;
 use Centrex\Settings\Observers\SettingsObserver;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\{Builder, Model};
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
 final class Setting extends Model
@@ -40,7 +39,7 @@ final class Setting extends Model
      * The attributes that should be cast.
      */
     protected $casts = [
-        'autoload' => 'boolean',
+        'autoload'   => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
@@ -50,7 +49,7 @@ final class Setting extends Model
      */
     protected static function booted(): void
     {
-        static::observe(SettingsObserver::class);
+        self::observe(SettingsObserver::class);
     }
 
     /**
@@ -61,18 +60,18 @@ final class Setting extends Model
         return Cache::remember(
             "setting_exists:{$key}",
             now()->addHour(),
-            fn () => self::where('key', $key)->exists()
+            fn () => self::where('key', $key)->exists(),
         );
     }
 
     /**
      * Get the unserialized value attribute.
      */
-    protected function value(): Attribute
+    private function value(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => $value ? unserialize($value) : null,
-            set: fn ($value) => serialize($value),
+            get: fn ($value): mixed => $value ? unserialize($value) : null,
+            set: fn ($value): string => serialize($value),
         );
     }
 
