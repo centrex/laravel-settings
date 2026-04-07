@@ -79,8 +79,7 @@ final class Settings
     public function refreshCache(): self
     {
         Cache::forget(self::CACHE_KEY);
-        $this->getCachedSettings(true);
-
+        $this->getCachedSettings();
         $this->chargeConfig();
 
         return $this;
@@ -89,11 +88,10 @@ final class Settings
     /**
      * Get cached settings collection.
      */
-    private function getCachedSettings(bool $refresh = false): \Illuminate\Support\Collection
+    private function getCachedSettings(): \Illuminate\Support\Collection
     {
-        return Cache::remember(
+        return Cache::rememberForever(
             self::CACHE_KEY,
-            $refresh ? 0 : null,
             fn () => Setting::get()->keyBy('key'),
         );
     }
