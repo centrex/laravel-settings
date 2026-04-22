@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\{Builder, Model};
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Cache;
+use Throwable;
 
 final class Setting extends Model
 {
@@ -70,8 +71,8 @@ final class Setting extends Model
     private function value(): Attribute
     {
         return Attribute::make(
-            get: fn ($value): mixed => $value ? unserialize($value) : null,
-            set: fn ($value): string => serialize($value),
+            get: fn ($value): mixed => $this->decodeValue($value),
+            set: fn ($value): ?string => $value === null ? null : serialize($value),
         );
     }
 
@@ -114,5 +115,24 @@ final class Setting extends Model
     {
         Settings::refreshCache();
         Cache::forget("setting_exists:{$this->key}");
+    }
+
+    private function decodeValue(mixed $value): mixed
+    {
+        if ($value === null || !is_string($value)) {
+            return $value;
+        }
+
+        try {
+            $decoded = unserialize($value, ['allowed_classes' => false]);
+
+            if ($decoded !== false || $value === 'b:0;') {
+                return $decoded;
+            }
+        } catch (Throwable) {
+            // Support legacy rows that were stored as plain strings.
+        }
+
+        return $value;
     }
 }

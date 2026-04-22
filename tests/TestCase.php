@@ -6,13 +6,17 @@ namespace Centrex\Settings\Tests;
 
 use Centrex\Settings\LaravelSettingsServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Schema;
 use Orchestra\Testbench\TestCase as Orchestra;
 
-final class TestCase extends Orchestra
+class TestCase extends Orchestra
 {
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        $this->artisan('migrate', ['--database' => 'testing'])->run();
 
         Factory::guessFactoryNamesUsing(
             fn (string $modelName): string => 'Centrex\\Settings\\Database\\Factories\\' . class_basename($modelName) . 'Factory',
@@ -29,10 +33,12 @@ final class TestCase extends Orchestra
     public function getEnvironmentSetUp($app): void
     {
         config()->set('database.default', 'testing');
+        config()->set('database.connections.testing', [
+            'driver' => 'sqlite',
+            'database' => ':memory:',
+            'prefix' => '',
+        ]);
 
-        /*
-        $migration = include __DIR__.'/../database/migrations/create_laravel-settings_table.php.stub';
-        $migration->up();
-        */
+        Schema::defaultStringLength(191);
     }
 }

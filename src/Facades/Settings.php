@@ -7,12 +7,12 @@ namespace Centrex\Settings\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \Centrex\Settings\Setting
+ * @see \Centrex\Settings\Settings
  */
 final class Settings extends Facade
 {
     protected static function getFacadeAccessor()
     {
-        return \Centrex\Settings\Settings::class;
+        return 'settings';
     }
 }

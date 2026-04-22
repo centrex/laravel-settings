@@ -5,12 +5,10 @@ declare(strict_types = 1);
 namespace Centrex\Settings\Observers;
 
 use Centrex\Settings\Models\Setting;
-use Illuminate\Support\Facades\Cache;
+use Centrex\Settings\Settings;
 
 class SettingsObserver
 {
-    private const CACHE_KEY = 'settings.cache'; // 1 hour
-
     /**
      * Handle cache invalidation when a setting is updated.
      *
@@ -48,14 +46,8 @@ class SettingsObserver
      */
     protected function flushSettingCache(Setting $setting): void
     {
-        // Clear the main settings cache
-        Cache::forget(self::CACHE_KEY);
-
-        // Clear individual key cache if implemented
-        Cache::forget("settings:{$setting->key}");
-
-        // Clear any related config cache
-        Cache::forget("config:{$setting->key}");
+        app(Settings::class)->refreshCache();
+        cache()->forget("setting_exists:{$setting->key}");
     }
 
     /**
