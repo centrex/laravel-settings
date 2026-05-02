@@ -46,8 +46,17 @@ class SettingsObserver
      */
     protected function flushSettingCache(Setting $setting): void
     {
-        app(Settings::class)->refreshCache();
-        cache()->forget("setting_exists:{$setting->key}");
+        $settings = app(Settings::class);
+        $tenantId = (int) $setting->tenant_id;
+
+        $settings->forgetSettingCache(
+            (string) $setting->key,
+            $setting->scope,
+            $tenantId,
+        );
+
+        $settings->refreshCache($tenantId);
+        cache()->forget("setting_exists:{$setting->tenant_id}:{$setting->key}");
     }
 
     /**

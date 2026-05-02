@@ -12,7 +12,8 @@ final class LaravelSettingsServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
-        $this->app->booted(fn (): \Centrex\Settings\Settings => $this->app->make(\Centrex\Settings\Settings::class)->loadIntoConfig());
+        
+        $this->app->booted(fn (): mixed => $this->app->make(Settings::class)->loadIntoConfig());
 
         if ($this->app->runningInConsole()) {
             $this->publishes([

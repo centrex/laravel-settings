@@ -22,7 +22,10 @@ return new class() extends Migration
      */
     public function up(): void
     {
-        Schema::create('settings', function (Blueprint $table) {
+        $tableName = config('settings.table', 'settings');
+        $connection = config('settings.connection');
+
+        Schema::connection($connection)->create($tableName, function (Blueprint $table) {
             // Recommended for proper Unicode support
             $table->charset = 'utf8mb4';
             $table->collation = 'utf8mb4_unicode_ci';
@@ -30,17 +33,15 @@ return new class() extends Migration
 
             $table->id();
 
-            // Setting identification
+            $table->unsignedBigInteger('tenant_id')->default(1)->index();
+            $table->nullableMorphs('scope');
             $table->string('key', 191)
-                ->unique()
                 ->comment('Unique setting identifier (max 191 chars for index compatibility)');
 
-            // Setting value storage
-            $table->text('value')
+            $table->mediumText('value')
                 ->nullable()
                 ->comment('Serialized setting value');
 
-            // Setting metadata
             $table->boolean('autoload')
                 ->default(true)
                 ->index()
@@ -51,33 +52,23 @@ return new class() extends Migration
                 ->index()
                 ->comment('Logical grouping of settings');
 
-            // Add encryption flag if needed
             $table->boolean('is_encrypted')->default(false);
-
-            // Add validation rules column if needed
             $table->text('validation_rules')->nullable();
+            $table->enum('type', ['string', 'integer', 'float', 'boolean', 'array', 'json', 'null'])->default('string');
+            $table->boolean('is_locked')->default(false)->index();
+            $table->string('description')->nullable();
+            $table->json('metadata')->nullable();
 
-            // Add tenant scope if needed
-            $table->unsignedBigInteger('tenant_id')->default(1)->index();
-
-            // Add type casting information
-            $table->enum('type', ['string', 'boolean', 'array', 'json'])->default('string');
-
-            // Recommended for audit logging
             $table->timestamps();
             $table->softDeletes();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
 
-            // Advanced indexing
             $table->index(['group', 'autoload'], 'settings_group_autoload_index');
-
-            // Full-text search if needed (MySQL/PostgreSQL)
-            // $table->fullText(['key', 'value'], 'settings_search_index');
+            $table->index(['tenant_id', 'group', 'autoload'], 'settings_tenant_group_autoload_index');
+            $table->index(['tenant_id', 'scope_type', 'scope_id'], 'settings_tenant_scope_index');
+            $table->unique(['tenant_id', 'scope_type', 'scope_id', 'key'], 'settings_scope_key_unique');
         });
-
-        // For large installations, consider partitioning:
-        // DB::statement('ALTER TABLE settings PARTITION BY KEY(`group`) PARTITIONS 5');
     }
 
     /**
@@ -85,9 +76,6 @@ return new class() extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('settings');
-
-        // If using partitioning:
-        // DB::statement('ALTER TABLE settings REMOVE PARTITIONING');
+        Schema::connection(config('settings.connection'))->dropIfExists(config('settings.table', 'settings'));
     }
 };
