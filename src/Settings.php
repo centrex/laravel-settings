@@ -5,9 +5,8 @@ declare(strict_types = 1);
 namespace Centrex\Settings;
 
 use Centrex\Settings\Models\Setting;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\{Arr, Collection};
 use Illuminate\Support\Facades\{Cache, Schema};
 use RuntimeException;
 
@@ -78,7 +77,6 @@ final class Settings
      *
      * @param  string  $key  Setting key
      * @param  mixed  $default  Default value if not found
-     * @return mixed
      */
     public function get(string $key, mixed $default = null, ?Model $scope = null, ?int $tenantId = null): mixed
     {
@@ -154,22 +152,31 @@ final class Settings
         $cacheKey = $this->autoloadCacheKey($tenantId);
         $cached = Cache::get($cacheKey);
 
-        if ($cached instanceof Collection) {
-            return $cached;
+        if (is_array($cached)) {
+            return collect($cached)
+                ->mapWithKeys(fn (array $attributes): array => [
+                    (string) $attributes['key'] => $this->settingFromAttributes($attributes),
+                ]);
         }
 
         Cache::forget($cacheKey);
 
-        return Cache::remember(
+        $settings = Setting::query()
+            ->tenant($tenantId ?? $this->tenantId())
+            ->forScope()
+            ->autoload()
+            ->get()
+            ->keyBy('key');
+
+        Cache::put(
             $cacheKey,
+            $settings
+                ->map(static fn (Setting $setting): array => $setting->getAttributes())
+                ->all(),
             $this->cacheTtl(),
-            fn (): Collection => Setting::query()
-                ->tenant($tenantId ?? $this->tenantId())
-                ->forScope()
-                ->autoload()
-                ->get()
-                ->keyBy('key'),
         );
+
+        return $settings;
     }
 
     /**
@@ -219,13 +226,35 @@ final class Settings
             return null;
         }
 
-        return Cache::remember(
-            $this->itemCacheKey($key, $scope, $tenantId),
+        $cacheKey = $this->itemCacheKey($key, $scope, $tenantId);
+        $cached = Cache::get($cacheKey);
+
+        if (is_array($cached) && array_key_exists('found', $cached)) {
+            return $cached['found'] === true
+                ? $this->settingFromAttributes((array) $cached['attributes'])
+                : null;
+        }
+
+        Cache::forget($cacheKey);
+
+        $setting = Setting::query()
+            ->effective($key, $scope, $tenantId ?? $this->tenantId())
+            ->first();
+
+        Cache::put(
+            $cacheKey,
+            $setting instanceof Setting
+                ? ['found' => true, 'attributes' => $setting->getAttributes()]
+                : ['found' => false],
             $this->cacheTtl(),
-            fn (): ?Setting => Setting::query()
-                ->effective($key, $scope, $tenantId ?? $this->tenantId())
-                ->first(),
         );
+
+        return $setting;
+    }
+
+    private function settingFromAttributes(array $attributes): Setting
+    {
+        return (new Setting())->newFromBuilder($attributes);
     }
 
     private function forgetCachedKey(string $key, ?Model $scope = null, ?int $tenantId = null): void
@@ -240,7 +269,7 @@ final class Settings
     public function forgetSettingCache(string $key, ?Model $scope = null, ?int $tenantId = null): void
     {
         $this->forgetCachedKey($key, $scope, $tenantId);
-        Cache::forget("setting_exists:" . ($tenantId ?? $this->tenantId()) . ":{$key}");
+        Cache::forget('setting_exists:' . ($tenantId ?? $this->tenantId()) . ":{$key}");
         Cache::forget("setting_exists:{$key}");
     }
 
@@ -262,23 +291,23 @@ final class Settings
     private function identity(string $key, ?Model $scope, int $tenantId): array
     {
         return [
-            'tenant_id' => $tenantId,
+            'tenant_id'  => $tenantId,
             'scope_type' => $scope?->getMorphClass(),
-            'scope_id' => $scope?->getKey(),
-            'key' => $key,
+            'scope_id'   => $scope?->getKey(),
+            'key'        => $key,
         ];
     }
 
     private function inferType(mixed $value): string
     {
         return match (true) {
-            $value === null => 'null',
-            is_bool($value) => 'boolean',
-            is_int($value) => 'integer',
-            is_float($value) => 'float',
-            is_array($value) => 'array',
+            $value === null   => 'null',
+            is_bool($value)   => 'boolean',
+            is_int($value)    => 'integer',
+            is_float($value)  => 'float',
+            is_array($value)  => 'array',
             is_object($value) => 'json',
-            default => 'string',
+            default           => 'string',
         };
     }
 
@@ -289,8 +318,8 @@ final class Settings
 
     private function settingsTableExists(): bool
     {
-        if ($this->tableReady !== null) {
-            return $this->tableReady;
+        if ($this->tableReady === true) {
+            return true;
         }
 
         try {
@@ -298,13 +327,19 @@ final class Settings
             $schema = Schema::connection($setting->getConnectionName() ?: config('database.default'));
             $table = $setting->getTable();
 
-            return $this->tableReady = $schema->hasTable($table)
+            $ready = $schema->hasTable($table)
                 && $schema->hasColumn($table, 'tenant_id')
                 && $schema->hasColumn($table, 'scope_type')
                 && $schema->hasColumn($table, 'scope_id')
                 && $schema->hasColumn($table, 'deleted_at');
+
+            if ($ready) {
+                $this->tableReady = true;
+            }
+
+            return $ready;
         } catch (\Throwable) {
-            return $this->tableReady = false;
+            return false;
         }
     }
 }

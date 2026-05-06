@@ -34,10 +34,12 @@ class TestCase extends Orchestra
     {
         config()->set('database.default', 'testing');
         config()->set('database.connections.testing', [
-            'driver' => 'sqlite',
+            'driver'   => 'sqlite',
             'database' => ':memory:',
-            'prefix' => '',
+            'prefix'   => '',
         ]);
+        config()->set('cache.default', 'array');
+        config()->set('cache.stores.array', ['driver' => 'array', 'serialize' => false]);
 
         Schema::defaultStringLength(191);
     }
